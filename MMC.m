@@ -13,8 +13,16 @@ expected_time_bet_arrival = 1:max_interarrival_time;
 probability_distribution_arrival_time = expcdf_2(expected_time_bet_arrival, lambda);
 
 max_service_time = input('Enter the maximum service time: ');
-service_time = 1:max_service_time;
+service_time = 1 : max_service_time;
 probability_distribution_service_time = expcdf_2(service_time, mu);
+
+% Bar chart for the commulative probabilities
+figure
+bar(round(probability_distribution_arrival_time, 4));
+title('Arrival time commulative probability distribution')
+figure
+bar(round(probability_distribution_service_time, 4));
+title('Service time commulative probability distribution')
 
 random_dig_arrival_time = round(probability_distribution_arrival_time, 4) * 10000; % Mutiplied by 1000 to be then compared with the generated random numbers
 random_dig_service_time = round(probability_distribution_service_time, 4) * 10000; % Mutiplied by 100 to be then compared with the generated random numbers
@@ -34,6 +42,7 @@ for i = 2:customer_num
   end
 end
 
+cus_arrival_time = cumsum(cus_interarival_time); % from the starting of the system 0 8 10 18 etc..
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cus_service_time = zeros(1, customer_num);
 
@@ -45,8 +54,13 @@ for i = 1:customer_num
     end
   end
 end
-
-cus_arrival_time = cumsum(cus_interarival_time); % from the starting of the system 0 8 10 18 etc..
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Adding extra service time due to random event outside of the system (Coffee break)
+for i = 1:customer_num
+    if randi(2) - 1 > 0
+        cus_service_time(i) = cus_service_time(i) + randi(2);
+    end
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Simulation
 
@@ -112,8 +126,18 @@ else
   Wq = @(lambda, mu) W(lambda, mu) - (1 / mu);
 end
 
+% Bar chart shows the number of customers waiting in the queue
+figure
+ttt = 0:sim_time;
+bar(ttt, q_length);
+title('Number of customers waiting in the queue at each time');
+xlabel('Time');
+ylabel('Number of customers');
+
 disp([' ']);
-disp(['The simulation time for the whole queue and service processes = ' num2str(sim_time)]);
+disp(['The simulation time for the whole queue and service processes = ' num2str(sim_time) ' Customer']);
+disp(['Average waiting time in the queue = ' num2str(mean(waiting_time)) ' Time units']);
+disp(['Average time the customers spend in the system = ' num2str(mean(system_time)) ' Time units']);
 disp([' ']);
 disp(['ρ (Utilization)= ' num2str(utilization(lambda, mu) * 100) '%']);
 disp(['L (Average number of customers in the system)= ' num2str(double(L(lambda, mu))) ' Customer']);
