@@ -2,17 +2,22 @@ clc;
 clear all;
 close all;
 
-customer_num = 100; %The number of customers in the system
+expcdf_2 = @(vec, mu) expcdf(vec * ((mu * 9.9035) / length(vec)), mu);
 
-max_interarrival_time = 8;
-expected_time_bet_arrival = 1:max_interarrival_time; %the expected time between arrivals
-probability_distribution_arrival_time = round(expcdf(expected_time_bet_arrival, max_interarrival_time * 0.1), 4);
+customer_num = input('Enter the number of customers in the system (must be a positive number): '); % The number of customers in the system
+lambda = input('Enter λ - the average time of arrivals per time period(must be a positive number and smaller than 𝜇): ');
+mu = input('Enter 𝜇 - the average number of people served per time period(must be a positive number and greater than λ): ');
 
-service_time = 1:6;
-probability_distribution_service_time = round(expcdf(service_time, 0.6), 4);
+max_interarrival_time = input('Enter the maximum interarrival time: ');
+expected_time_bet_arrival = 1 : max_interarrival_time;
+probability_distribution_arrival_time = expcdf_2(expected_time_bet_arrival, lambda);
 
-random_dig_arrival_time = (probability_distribution_arrival_time) * 10000; % Mutiplied by 1000 to be then compared with the generated random numbers
-random_dig_service_time = (probability_distribution_service_time) * 10000; % Mutiplied by 100 to be then compared with the generated random numbers
+max_service_time = input('Enter the maximum service time: ');
+service_time = 1 : max_service_time;
+probability_distribution_service_time = expcdf_2(service_time, mu);
+
+random_dig_arrival_time = round(probability_distribution_arrival_time, 4) * 10000; % Mutiplied by 1000 to be then compared with the generated random numbers
+random_dig_service_time = round(probability_distribution_service_time, 4) * 10000; % Mutiplied by 100 to be then compared with the generated random numbers
 
 rt = randi([1 10000], 1, customer_num); %random digit assignment for the interarrival time
 rs = randi([1 10000], 1, customer_num); %random digit assignment for the service time
@@ -52,7 +57,9 @@ end
 cus_arrival_time = cumsum(cus_interarival_time); % from the starting of the system 0 8 10 18 etc..
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Simulation
-no_of_servers = 2;
+
+no_of_servers = input('Enter the number of servers: ');
+
 time = 0;
 queue = [];
 q_length = [];
@@ -71,13 +78,6 @@ while (time <= sim_time || ~isempty(queue) || ismember(1, Servers_busy))
         cus_number = cus_number + 1; % indicate that this is the next customer
         queue = [cus_number queue]; % add new customer to queue
     end
-
-%     while (ismember(0, Servers_busy) && ~isempty(queue)) %Server is idle and queue is not empty
-%       free = find(~Servers_busy,1);
-%         Servers_busy(free) = 1; % make service busy
-%         time_service_ends(free) = time + cus_service_time(queue(end)); % time the service ends = current time + customer service time that is assigned to the last customer in the queue
-%         queue = queue(:, 1 : end - 1); % remove one from queue
-%     end
 
     if (ismember(0, Servers_busy) && ~isempty(queue)) %Server is idle and queue is not empty
       free = find(~Servers_busy);
@@ -102,12 +102,9 @@ end
 sim_time = time - 1; % Total simulation time
 system_time = waiting_time + cus_service_time;
 
+% ttt = 0:sim_time;
+% bar(ttt, q_length);
+
 disp(['The simulation time for the whole queue and service processes = ' num2str(sim_time)]);
-% disp(['Average waiting time in the queue = ' num2str(sum(waiting_time)/length(waiting_time))]);
-disp(['Average waiting time in the queue = ' num2str(mean(waiting_time))]);
-% disp(['Average time the customers spend in the system = ' num2str(sum(system_time)/length(system_time))]);
-disp(['Average time the customers spend in the system = ' num2str(mean(system_time))]);
+disp(['The simulation time for the whole queue and service processes = ' num2str(sim_time)]);
 
-ttt = 0:sim_time;
-
-bar(ttt, q_length);

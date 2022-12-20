@@ -1,21 +1,26 @@
 clc;
 clear all;
+close all;
 
-customer_num= 10000; %The number of customers in the system
+expcdf_2 = @(vec, mu) expcdf(vec * ((mu * 9.9035) / length(vec)), mu);
+
+customer_num = input('Enter the number of customers in the system (must be a positive number): '); % The number of customers in the system
+lambda = input('Enter λ - the average time of arrivals per time period(must be a positive number and smaller than 𝜇): ');
+mu = input('Enter 𝜇 - the average number of people served per time period(must be a positive number and greater than λ): ');
 
 max_interarrival_time = 8;
-expected_time_bet_arrival = 1:max_interarrival_time; %the expected time between arrivals
-probability_distribution_arrival_time = round(expcdf(expected_time_bet_arrival, max_interarrival_time*0.1), 4);
+expected_time_bet_arrival = 1:max_interarrival_time;
+probability_distribution_arrival_time = expcdf_2(expected_time_bet_arrival, lambda);
 
-service_time=1:6;
-probability_distribution_service_time = round(poisscdf(service_time, max_interarrival_time*0.1), 4);
+max_service_time = 6;
+max_service_time = 1:max_service_time;
+probability_distribution_service_time = expcdf_2(max_service_time, mu);
 
-random_dig_arrival_time = (probability_distribution_arrival_time) * 10000; % Mutiplied by 1000 to be then compared with the generated random numbers
-random_dig_service_time = (probability_distribution_service_time) * 10000; % Mutiplied by 100 to be then compared with the generated random numbers
+random_dig_arrival_time = round(probability_distribution_arrival_time, 4) * 10000; % Mutiplied by 1000 to be then compared with the generated random numbers
+random_dig_service_time = round(probability_distribution_service_time, 4) * 10000; % Mutiplied by 100 to be then compared with the generated random numbers
 
-
-rt = randi([1 10000], 1,customer_num);%random digit assignment for the interarrival time
-rs = randi([1 10000], 1,customer_num); %random digit assignment for the service time
+rt = randi([1 10000], 1, customer_num); %random digit assignment for the interarrival time
+rs = randi([1 10000], 1, customer_num); %random digit assignment for the service time
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cus_interarival_time = zeros(1,customer_num); % vector of size 1x20 to hold the interaarrival times for each customer
