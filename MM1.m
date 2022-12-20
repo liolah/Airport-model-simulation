@@ -13,8 +13,8 @@ expected_time_bet_arrival = 1:max_interarrival_time;
 probability_distribution_arrival_time = expcdf_2(expected_time_bet_arrival, lambda);
 
 max_service_time = 6;
-max_service_time = 1:max_service_time;
-probability_distribution_service_time = expcdf_2(max_service_time, mu);
+service_time = 1 : max_service_time;
+probability_distribution_service_time = expcdf_2(service_time, mu);
 
 random_dig_arrival_time = round(probability_distribution_arrival_time, 4) * 10000; % Mutiplied by 1000 to be then compared with the generated random numbers
 random_dig_service_time = round(probability_distribution_service_time, 4) * 10000; % Mutiplied by 100 to be then compared with the generated random numbers

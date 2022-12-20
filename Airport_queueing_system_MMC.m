@@ -17,12 +17,12 @@ service_time = 1 : max_service_time;
 probability_distribution_service_time = expcdf_2(service_time, mu);
 
 % Bar chart for the commulative probabilities
-figure
-bar(round(probability_distribution_arrival_time, 4));
-title('Arrival time commulative probability distribution')
-figure
-bar(round(probability_distribution_service_time, 4));
-title('Service time commulative probability distribution')
+% figure
+% bar(round(probability_distribution_arrival_time, 4));
+% title('Arrival time commulative probability distribution')
+% figure
+% bar(round(probability_distribution_service_time, 4));
+% title('Service time commulative probability distribution')
 
 random_dig_arrival_time = round(probability_distribution_arrival_time, 4) * 10000; % Mutiplied by 1000 to be then compared with the generated random numbers
 random_dig_service_time = round(probability_distribution_service_time, 4) * 10000; % Mutiplied by 100 to be then compared with the generated random numbers
