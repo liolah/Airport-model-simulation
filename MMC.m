@@ -112,6 +112,7 @@ else
   Wq = @(lambda, mu) W(lambda, mu) - (1 / mu);
 end
 
+disp([' ']);
 disp(['The simulation time for the whole queue and service processes = ' num2str(sim_time)]);
 disp([' ']);
 disp(['ρ (Utilization)= ' num2str(utilization(lambda, mu) * 100) '%']);
